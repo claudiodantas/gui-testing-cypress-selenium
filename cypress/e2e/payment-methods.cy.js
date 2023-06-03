@@ -6,7 +6,7 @@ describe('payment methods', () => {
     cy.get('.primary').click();
   });
   // Remove .only and implement others test cases!
-  it.only('change cash on delivery position', () => {
+  it('change cash on delivery position', () => {
     // Click in payment methods in side menu
     cy.clickInFirst('a[href="/admin/payment-methods/"]');
     // Type in value input to search for specify payment method
@@ -23,12 +23,50 @@ describe('payment methods', () => {
     // Assert that payment method has been updated
     cy.get('body').should('contain', 'Payment method has been successfully updated.');
   });
-  it('test case 2', () => {
-    // Implement your test case 2 code here
-  });
-  it('test case 3', () => {
-    // Implement your test case 3 code here
+
+  it('change cash on delivery name', () => {
+    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.get('[id="criteria_search_value"]').type('cash');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui labeled icon button "]').last().click();
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('new name');
+    cy.get('[id="sylius_save_changes_button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'Payment method has been successfully updated.');
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').invoke('val').should('contain', 'new name');
   });
 
-  // Implement the remaining test cases in a similar manner
+  it('create new offline payment method', () => {
+    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_code"]').type('code');
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('new payment method');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'Payment method has been successfully created.');
+  });
+
+  it('should not create new offline payment method without required code field', () => {
+    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('new payment method');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'Please enter payment method code.');
+  });
+
+  it.only('should not create new offline payment method without required name field', () => {
+    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_code"]').type('new payment');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'Please enter payment method name.');
+  });
+
 });
