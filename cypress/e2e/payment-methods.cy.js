@@ -5,6 +5,21 @@ describe('payment methods', () => {
     cy.get('[id="_password"]').type('sylius');
     cy.get('.primary').click();
   });
+
+  after(() => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('[id="criteria_search_value"]').type('code');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui red labeled icon button"]').last().click();
+    cy.get('[id="confirmation-button"]').click();
+    cy.visit('/admin/payment-methods/');
+    cy.get('[id="criteria_search_value"]').type('cash');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui labeled icon button "]').last().click();
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('Cash on delivery');
+    cy.get('[id="sylius_save_changes_button"]').scrollIntoView().click();
+  });
+
   // Remove .only and implement others test cases!
   it('change cash on delivery position', () => {
     // Click in payment methods in side menu
@@ -94,7 +109,7 @@ describe('payment methods', () => {
     cy.get('body').should('contain', 'Payment method code can only be comprised of letters, numbers, dashes and underscores.');
   }));
 
-  it('delete payment method', async () => {
+  it('delete payment method', () => {
     cy.visit('/admin/payment-methods/');
     cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
     cy.get('[id="offline"]').click();
@@ -113,7 +128,7 @@ describe('payment methods', () => {
     cy.get('body').should('contain', 'Payment method has been successfully deleted.');
   });
 
-  it('disable cash on delivery method', async () => {
+  it('disable cash on delivery method', () => {
     cy.visit('/admin/payment-methods/');
     cy.get('[id="criteria_search_value"]').type('cash');
     cy.get('*[class^="ui blue labeled icon button"]').click();
@@ -126,7 +141,7 @@ describe('payment methods', () => {
     cy.get('[id="sylius_payment_method_enabled"]').should('not.be.checked');
   });
 
-  it('enable cash on delivery method', async () => {
+  it('enable cash on delivery method', () => {
     cy.visit('/admin/payment-methods/');
     cy.get('[id="criteria_search_value"]').type('cash');
     cy.get('*[class^="ui blue labeled icon button"]').click();
