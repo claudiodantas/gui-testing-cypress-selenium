@@ -25,10 +25,10 @@ describe('payment methods', () => {
   });
 
   it('change cash on delivery name', () => {
-    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.visit('/admin/payment-methods/');
     cy.get('[id="criteria_search_value"]').type('cash');
     cy.get('*[class^="ui blue labeled icon button"]').click();
-    cy.get('*[class^="ui labeled icon button "]').last().click();
+    cy.get('*[class^="ui labeled icon button"]').last().click();
     cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('new name');
     cy.get('[id="sylius_save_changes_button"]').scrollIntoView().click();
 
@@ -37,7 +37,7 @@ describe('payment methods', () => {
   });
 
   it('create new offline payment method', () => {
-    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.visit('/admin/payment-methods/');
     cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
     cy.get('[id="offline"]').click();
     cy.get('[id="sylius_payment_method_code"]').type('code');
@@ -48,7 +48,7 @@ describe('payment methods', () => {
   });
 
   it('should not create new offline payment method without required code field', () => {
-    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+    cy.visit('/admin/payment-methods/');
     cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
     cy.get('[id="offline"]').click();
     cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('new payment method');
@@ -58,8 +58,8 @@ describe('payment methods', () => {
     cy.get('body').should('contain', 'Please enter payment method code.');
   });
 
-  it.only('should not create new offline payment method without required name field', () => {
-    cy.clickInFirst('a[href="/admin/payment-methods/"]');
+  it('should not create new offline payment method without required name field', () => {
+    cy.visit('/admin/payment-methods/');
     cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
     cy.get('[id="offline"]').click();
     cy.get('[id="sylius_payment_method_code"]').type('new payment');
@@ -67,6 +67,93 @@ describe('payment methods', () => {
 
     cy.get('body').should('contain', 'This form contains errors.');
     cy.get('body').should('contain', 'Please enter payment method name.');
+  });
+
+  it('should not create new offline payment method with code that already exists', () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_code"]').type('cash_on_delivery');
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('code already exists');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'The payment method with given code already exists.');
+  });
+
+  ["blank space", "speci@l"].forEach( (value) => 
+  it('should not create new offline payment method with invalid code', () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_code"]').type(value);
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('invalid code');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'This form contains errors.');
+    cy.get('body').should('contain', 'Payment method code can only be comprised of letters, numbers, dashes and underscores.');
+  }));
+
+  it('delete payment method', async () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
+    cy.get('[id="offline"]').click();
+    cy.get('[id="sylius_payment_method_code"]').type('to_be_deleted');
+    cy.get('[id="sylius_payment_method_translations_en_US_name"]').type('to be deleted');
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.visit('/admin/payment-methods/');
+
+    cy.get('[id="criteria_search_value"]').type('to be deleted');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+
+    cy.get('*[class^="ui red labeled icon button"]').last().click();
+    cy.get('[id="confirmation-button"]').click();
+    
+    cy.get('body').should('contain', 'Payment method has been successfully deleted.');
+  });
+
+  it('disable cash on delivery method', async () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('[id="criteria_search_value"]').type('cash');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui labeled icon button "]').last().click();
+
+    cy.get('[id="sylius_payment_method_enabled"]').uncheck({ force: true });
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'Payment method has been successfully updated.');
+    cy.get('[id="sylius_payment_method_enabled"]').should('not.be.checked');
+  });
+
+  it('enable cash on delivery method', async () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('[id="criteria_search_value"]').type('cash');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui labeled icon button "]').last().click();
+
+    cy.get('[id="sylius_payment_method_enabled"]').check({ force: true });
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.get('body').should('contain', 'Payment method has been successfully updated.');
+    cy.get('[id="sylius_payment_method_enabled"]').should('be.checked');
+  });
+
+  it('filter enabled payment methods', async () => {
+    cy.visit('/admin/payment-methods/');
+    cy.get('[id="criteria_search_value"]').type('cash');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('*[class^="ui labeled icon button "]').last().click();
+    //makes cash_on_delivery disabled
+    cy.get('[id="sylius_payment_method_enabled"]').uncheck({ force: true });
+    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
+
+    cy.visit('/admin/payment-methods/');
+
+    cy.get('[id="criteria_enabled"]').select('Yes');
+    cy.get('[class="ui blue labeled icon button"]').click();
+
+    cy.get('body').should('not.contain', 'cash_on_delivery');
   });
 
 });
