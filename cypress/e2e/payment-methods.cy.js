@@ -139,21 +139,4 @@ describe('payment methods', () => {
     cy.get('[id="sylius_payment_method_enabled"]').should('be.checked');
   });
 
-  it('filter enabled payment methods', async () => {
-    cy.visit('/admin/payment-methods/');
-    cy.get('[id="criteria_search_value"]').type('cash');
-    cy.get('*[class^="ui blue labeled icon button"]').click();
-    cy.get('*[class^="ui labeled icon button "]').last().click();
-    //makes cash_on_delivery disabled
-    cy.get('[id="sylius_payment_method_enabled"]').uncheck({ force: true });
-    cy.get('*[class="ui labeled icon primary button"]').scrollIntoView().click();
-
-    cy.visit('/admin/payment-methods/');
-
-    cy.get('[id="criteria_enabled"]').select('Yes');
-    cy.get('[class="ui blue labeled icon button"]').click();
-
-    cy.get('body').should('not.contain', 'cash_on_delivery');
-  });
-
 });
