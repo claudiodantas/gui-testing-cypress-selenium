@@ -149,7 +149,7 @@ describe('payment methods', () => {
     const bodyError = await driver.findElement(By.tagName('body')).getText();
     assert(bodyError.includes('Payment method code can only be comprised of letters, numbers, dashes and underscores.'));
 
-  })};
+  });
   
 
   it.only('delete payment method', async () => {
@@ -173,9 +173,39 @@ describe('payment methods', () => {
 
   });
 
+  it.only('disable cash on delivery method', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon button "]')).last().click();
+
+    await driver.findElement(By.id('sylius_payment_method_enabled'))//.uncheck({ force: true });
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]'))//.scrollIntoView().click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully updated.'));
+
+    const nameInputValue = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
+    assert(nameInputValue.includes('not.be.checked'));
+
+  });
+
+  it.only('enable cash on delivery method', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon button "]')).last().click();
+
+    await driver.findElement(By.id('sylius_payment_method_enabled'))//.uncheck({ force: true });
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]'))//.scrollIntoView().click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully updated.'));
+
+    const nameInputValue = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
+    assert(nameInputValue.includes('be.checked'));
+
+  });
 
 
-
-
-  // Implement the remaining test cases in a similar manner
-);
+  )};
