@@ -79,7 +79,7 @@ describe('payment methods', () => {
   });
 
 
-  it.only('should not create new offline payment method without required code field', async () => {
+  it('should not create new offline payment method without required code field', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -97,7 +97,7 @@ describe('payment methods', () => {
 
 
   
-  it.only('should not create new offline payment method without required name field', async () => {
+  it('should not create new offline payment method without required name field', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -115,7 +115,7 @@ describe('payment methods', () => {
 
 
 
-  it.only('should not create new offline payment method with code that already exists', async () => {
+  it('should not create new offline payment method with code that already exists', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -134,7 +134,7 @@ describe('payment methods', () => {
 
 
   ["blank space", "speci@l"].forEach( (value) =>
-  it.only('should not create new offline payment method with invalid code', async () => {
+  it('should not create new offline payment method with invalid code', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -152,7 +152,7 @@ describe('payment methods', () => {
   });
   
 
-  it.only('delete payment method', async () => {
+  it('delete payment method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -173,7 +173,7 @@ describe('payment methods', () => {
 
   });
 
-  it.only('disable cash on delivery method', async () => {
+  it('disable cash on delivery method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
     await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
@@ -190,7 +190,7 @@ describe('payment methods', () => {
 
   });
 
-  it.only('enable cash on delivery method', async () => {
+  it('enable cash on delivery method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
     await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
