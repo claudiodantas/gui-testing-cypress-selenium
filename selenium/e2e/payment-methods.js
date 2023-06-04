@@ -21,6 +21,7 @@ describe('payment methods', () => {
     await driver.findElement(By.css('.primary')).click();
     // await driver.sleep(1000);
   });
+
  
   // Remove .only and implement others test cases!
   it('change cash on delivery position', async () => {
@@ -47,7 +48,7 @@ describe('payment methods', () => {
     const bodyText = await driver.findElement(By.tagName('body')).getText();
     assert(bodyText.includes('Payment method has been successfully updated.'));
   });
-
+//ok
   it('change cash on delivery name', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
@@ -63,7 +64,7 @@ describe('payment methods', () => {
     assert(nameInputValue.includes('new name'));
   });
 
-
+//ok
   it('create new offline payment method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
@@ -78,7 +79,7 @@ describe('payment methods', () => {
 
   });
 
-
+//ok
   it('should not create new offline payment method without required code field', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
@@ -96,7 +97,7 @@ describe('payment methods', () => {
   });
 
 
-  
+  //ok
   it('should not create new offline payment method without required name field', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
@@ -114,7 +115,7 @@ describe('payment methods', () => {
   });
 
 
-
+//ok
   it('should not create new offline payment method with code that already exists', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
@@ -132,7 +133,7 @@ describe('payment methods', () => {
 
   });
 
-
+//ok
   ["blank space", "speci@l"].forEach( (value) =>
   it('should not create new offline payment method with invalid code', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
@@ -149,10 +150,10 @@ describe('payment methods', () => {
     const bodyError = await driver.findElement(By.tagName('body')).getText();
     assert(bodyError.includes('Payment method code can only be comprised of letters, numbers, dashes and underscores.'));
 
-  });
+  }));
   
-
-  it('delete payment method', async () => {
+//not ok
+  it.only('delete payment method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
     await driver.findElement(By.id('offline')).click();
@@ -165,7 +166,9 @@ describe('payment methods', () => {
     await driver.findElement(By.id('criteria_search_value')).sendKeys('to be deleted');
     await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
 
-    await driver.findElement(By.css('*[class^="ui red labeled icon button"]')).last().click();
+    await driver.findElement(By.css('*[class^="ui red labeled icon button"]')).last();
+    //await driver.findElement(By.css("immediateParentTag div:last-child > div.form-group.col-sm-2.col-xs-12 > input"))
+
     await driver.findElement(By.id('confirmation-button')).click();
 
     const bodyText = await driver.findElement(By.tagName('body')).getText();
@@ -173,6 +176,7 @@ describe('payment methods', () => {
 
   });
 
+//not ok
   it('disable cash on delivery method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
@@ -180,16 +184,18 @@ describe('payment methods', () => {
     await driver.findElement(By.css('*[class^="ui labeled icon button "]')).last().click();
 
     await driver.findElement(By.id('sylius_payment_method_enabled'))//.uncheck({ force: true });
-    await driver.findElement(By.css('*[class="ui labeled icon primary button"]'))//.scrollIntoView().click();
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
 
     const bodyText = await driver.findElement(By.tagName('body')).getText();
     assert(bodyText.includes('Payment method has been successfully updated.'));
 
-    const nameInputValue = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
-    assert(nameInputValue.includes('not.be.checked'));
+    const checkPayment = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
+    assert(checkPayment.includes('not.be.checked'));
 
   });
 
+
+//not ok
   it('enable cash on delivery method', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
@@ -197,15 +203,15 @@ describe('payment methods', () => {
     await driver.findElement(By.css('*[class^="ui labeled icon button "]')).last().click();
 
     await driver.findElement(By.id('sylius_payment_method_enabled'))//.uncheck({ force: true });
-    await driver.findElement(By.css('*[class="ui labeled icon primary button"]'))//.scrollIntoView().click();
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
 
     const bodyText = await driver.findElement(By.tagName('body')).getText();
     assert(bodyText.includes('Payment method has been successfully updated.'));
 
-    const nameInputValue = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
-    assert(nameInputValue.includes('be.checked'));
+    const checkPayment = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
+    assert(checkPayment.includes('be.checked'));
 
   });
 
-
-  )};
+})
+  
