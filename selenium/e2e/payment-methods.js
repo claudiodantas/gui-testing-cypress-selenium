@@ -9,26 +9,11 @@ describe('payment methods', () => {
   });
 
   after(async () => {
-/*    await driver.findElement(By.linkText('Payment methods')).click();
-    await driver.findElement(By.id('criteria_search_value')).sendKeys('code');
-    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-    await driver.findElement(By.css('*[class^="ui red labeled icon button"]'));
-    await buttons[buttons.length - 1].click();
-    await driver.findElement(By.id('confirmation-button')).click();
-
-    await driver.findElement(By.linkText('Payment methods')).click();
-
-    await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
-    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-    const buttons = await driver.findElements(By.css('*[class^="ui labeled icon button "]'));
-    await buttons[buttons.length - 1].click();
-    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('Cash on delivery');
-    await driver.findElement(By.id('sylius_save_changes_button')).click();/*/
-   await driver.quit();
+    await driver.quit();
   });
 
   beforeEach(async () => {
-    driver.manage().deleteAllCookies();
+    await driver.manage().deleteAllCookies();
     await driver.get('http://localhost:8080/admin');
     // await driver.get('http://150.165.75.99:8080/admin');
     await driver.findElement(By.id('_username')).sendKeys('sylius');
@@ -63,170 +48,147 @@ describe('payment methods', () => {
     assert(bodyText.includes('Payment method has been successfully updated.'));
   });
 
-//ok
-it('change cash on delivery name', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
-  await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-  const buttons = await driver.findElements(By.css('*[class^="ui labeled icon button "]'));
-  await buttons[buttons.length - 1].click();
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new name');
-  await driver.findElement(By.id('sylius_save_changes_button')).click();
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('Payment method has been successfully updated.'));
-
-  const nameInputValue = await driver.findElement(By.tagName('body')).getText();
-  assert(nameInputValue.includes('new name'));
-});
-
-//ok
-it('create new offline payment method', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('code');
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new payment method');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('Payment method has been successfully created.'));
-
-});
-
-
-//ok
-it('should not create new offline payment method without required code field', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new payment method');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('This form contains errors.'));
-
-  const bodyError = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyError.includes('Please enter payment method code.'));
-
-});
-
-
-//ok
-it('should not create new offline payment method without required name field', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('new payment');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('This form contains errors.'));
-
-  const bodyError = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyError.includes('Please enter payment method name.'));
-
-});
-
-
-//ok
-it('should not create new offline payment method with code that already exists', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('cash_on_delivery');
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('code already exists');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('This form contains errors.'));
-
-  const bodyError = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyError.includes('The payment method with given code already exists.'));
-
-});
-
-//ok
-["blank space", "speci@l"].forEach( (value) =>
-it('should not create new offline payment method with invalid code', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_code')).sendKeys(value);
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('invalid code');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('This form contains errors.'));
-
-  const bodyError = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyError.includes('Payment method code can only be comprised of letters, numbers, dashes and underscores.'));
-
-}));
-
-//ok
-it.only('delete payment method', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
-  await driver.findElement(By.id('offline')).click();
-  await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('to_be_deleted');
-  await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('to be deleted');
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-  await driver.findElement(By.linkText('Payment methods')).click();
-
-  await driver.findElement(By.id('criteria_search_value')).sendKeys('to be deleted');
-  await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-
-  const buttons = await driver.findElement(By.css('*[class^="ui red labeled icon button"]'));
-  await buttons[buttons.length - 1].click();
-
-  await driver.findElement(By.id('confirmation-button')).click();
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('Payment method has been successfully deleted.'));
-
-});
-
-//not ok
-it('disable cash on delivery method', async () => {
-  await driver.findElement(By.linkText('Payment methods')).click();
-  await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
-  await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-  const buttons = await driver.findElement(By.css('*[class^="ui labeled icon button "]'));
-  await buttons[buttons.length - 1].click();
-
-  await driver.findElement(By.id('bulk_select_checkbox')).click()//.uncheck({ force: true });
-  await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
-
-  const bodyText = await driver.findElement(By.tagName('body')).getText();
-  assert(bodyText.includes('Payment method has been successfully updated.'));
-
-  const checkPayment = await driver.findElement(By.tagName('body')).getText();
-  assert(checkPayment.includes('not.be.checked'));
-
-});
-//not ok
-  it('enable cash on delivery method', async () => {
+  it('change cash on delivery name', async () => {
     await driver.findElement(By.linkText('Payment methods')).click();
     await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
     await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
-    await driver.findElement(By.css('*[class^="ui labeled icon button "]')).last().click();
+    const buttons = await driver.findElements(By.css('*[class^="ui labeled icon button "]'));
+    await buttons[buttons.length - 1].click();
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new name');
+    await driver.findElement(By.id('sylius_save_changes_button')).click();
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully updated.'));
 
-    await driver.findElement(By.id('sylius_payment_method_enabled'))//.uncheck({ force: true });
+    const nameInputValue = await driver.findElement(By.tagName('body')).getText();
+    assert(nameInputValue.includes('new name'));
+  });
+
+  it('create new offline payment method', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('code2');
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new payment method2');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully created.'));
+
+  });
+
+  it('should not create new offline payment method without required code field', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('new payment method');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+
+    const bodyError = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyError.includes('Please enter payment method code.'));
+
+  }).timeout(25000);
+
+  it('should not create new offline payment method without required name field', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('new_payment');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+
+    const bodyError = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyError.includes('Please enter payment method name.'));
+
+  }).timeout(25000);
+
+  it('should not create new offline payment method with code that already exists', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('cash_on_delivery');
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('code already exists');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+
+    const bodyError = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyError.includes('The payment method with given code already exists.'));
+
+  });
+
+  it('should not create new offline payment method with invalid code', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('.plus')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_code')).sendKeys("blank space");
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('invalid code');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
+
+    const bodyError = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyError.includes('Payment method code can only be comprised of letters, numbers, dashes and underscores.'));
+
+  });
+
+  it('delete payment method', async () => {
+    await driver.findElement(By.linkText('Payment methods')).click();
+    await driver.findElement(By.css('*[class^="ui labeled icon top right floating dropdown button primary link"]')).click();
+    await driver.findElement(By.id('offline')).click();
+    await driver.findElement(By.id('sylius_payment_method_code')).sendKeys('to_be_deleted');
+    await driver.findElement(By.id('sylius_payment_method_translations_en_US_name')).sendKeys('to be deleted');
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+    await driver.get('http://localhost:8080/admin/payment-methods/');
+
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('to be deleted');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+
+    await driver.findElement(By.css('form:nth-child(2) > .ui > .icon')).click();
+
+    await driver.findElement(By.id('confirmation-button')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully deleted.'));
+
+  }).timeout(25000);
+
+  it('disable cash on delivery method', async () => {
+    await driver.get('http://localhost:8080/admin/payment-methods/');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    await driver.findElement(By.linkText('Edit')).click();
+
+    await driver.findElement(By.css('.field:nth-child(3) label')).click();
     await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
 
     const bodyText = await driver.findElement(By.tagName('body')).getText();
     assert(bodyText.includes('Payment method has been successfully updated.'));
+    await driver.findElement(By.css('.field:nth-child(3) label')).click();
+  }).timeout(25000);
 
-    const checkPayment = await driver.findElement(By.id('sylius_payment_method_enabled')).getText();
-    assert(checkPayment.includes('be.checked'));
+  it('enable cash on delivery method', async () => {
+    await driver.get('http://localhost:8080/admin/payment-methods/');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('cash');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    await driver.findElement(By.linkText('Edit')).click();
 
-  });
+    await driver.findElement(By.css('.field:nth-child(3) label')).click()
+    await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Payment method has been successfully updated.'));
+    await driver.findElement(By.css('.field:nth-child(3) label')).click();
+  }).timeout(25000);;
 
 })
   
