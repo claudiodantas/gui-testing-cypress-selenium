@@ -51,7 +51,7 @@ describe('payment methods', () => {
     cy.get('[id="sylius_payment_method_translations_en_US_name"]').invoke('val').should('contain', 'new name');
   });
 
-  it.only('create new offline payment method', () => {
+  it('create new offline payment method', () => {
     cy.visit('/admin/payment-methods/');
     cy.get('*[class^="ui labeled icon top right floating dropdown button primary link"]').click();
     cy.get('[id="offline"]').click();

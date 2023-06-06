@@ -182,7 +182,7 @@ describe('payment methods', () => {
     await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
     await driver.findElement(By.linkText('Edit')).click();
 
-    await driver.findElement(By.css('.field:nth-child(3) label')).click()
+    await driver.findElement(By.css('.field:nth-child(3) label')).click();
     await driver.findElement(By.css('*[class="ui labeled icon primary button"]')).click();
 
     const bodyText = await driver.findElement(By.tagName('body')).getText();
@@ -191,4 +191,3 @@ describe('payment methods', () => {
   }).timeout(25000);;
 
 })
-  
